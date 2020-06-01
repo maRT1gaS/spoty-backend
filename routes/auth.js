@@ -3,6 +3,8 @@ const router = express.Router();
 const uuidv4 = require('uuid').v4;
 const bcrypt = require('bcryptjs');
 
+const authMiddleware = require('../authMiddleware');
+
 const Users = require('../modules/Users');
 
 router.post('/signup', async (req, res) => {
@@ -31,9 +33,12 @@ router.post('/signup', async (req, res) => {
         });
     } catch (error) {
         if (error.name === 'MongoError' && error.code === 11000) {
-            res.status(400).json({ data: {
-                email: 'Email already exist.'
-            }});
+            res.status(200).json({
+                error: true,
+                data: {
+                    email: 'Email already exist.'
+                }
+            });
         }
         res.status(400).json({ message: error });
     }
@@ -42,12 +47,11 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
     try {
         const user = await Users.findOne({ email: req.body.email });
-        console.log(user);
         if (user) {
             const isValidPassword = await bcrypt.compare(req.body.password, user.password);
             if (isValidPassword) {
                 res.cookie('TOKEN', user.token)
-                return res.json({
+                return res.status(201).json({
                     name: user.name,
                     email: user.email,
                     id: user.id

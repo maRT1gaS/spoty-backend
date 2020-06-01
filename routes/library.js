@@ -30,7 +30,7 @@ const getLibrary = async (id) => {
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const library = await getLibrary(req.user.id);
+        const library = await getLibrary(req.user._id);
         res.json(library);
     } catch (error) {
         res.status(400).json({ message: error })
@@ -39,11 +39,11 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.post('/', authMiddleware, async (req, res) => {
     try {
-        const user = await (await Users.findById(req.user.id).select('tags library')).toJSON();
+        const user = await (await Users.findById(req.user._id).select('tags library')).toJSON();
         const library = [...user.library].map((val) => val.toString());
         if (library.includes(req.body.id)) {
-            const library = await Users.findById(req.user.id).select('library');
-            return res.json(library);
+            const newLibrary = await getLibrary(req.user._id);
+            res.json(newLibrary);
         }
         const song = await (await Songs.findById(req.body.id).select('tags')).toJSON();
         const tags = user.tags || {};
@@ -56,11 +56,13 @@ router.post('/', authMiddleware, async (req, res) => {
         })
         const result = await Users
         .findOneAndUpdate(
-            req.user.id,
-            { $set: { tags },
-            $push: { library: { $each: [req.body.id], $position: 0 } } });
-        const newLibrary = await getLibrary(req.user.id);
-        console.log(newLibrary);
+            { _id: req.user._id },
+            { 
+                $set: { tags },
+                $push: { library: { $each: [req.body.id], $position: 0 } }
+            });
+        const newLibrary = await getLibrary(req.user._id);
+        console.log(req.user);
         res.json(newLibrary);
     } catch (error) {
         res.status(400).json({ message: error })
@@ -69,12 +71,12 @@ router.post('/', authMiddleware, async (req, res) => {
 
 router.delete('/', authMiddleware, async (req, res) => {
     try {
-        const user = await (await Users.findById(req.user.id).select('tags library')).toJSON();
+        const user = await (await Users.findById(req.user._id).select('tags library')).toJSON();
         const library = [...user.library].map((val) => val.toString());
         console.log(library, req.body.id);
         if (!library.includes(req.body.id)) {
-            const library = await Users.findById(req.user.id).select('library');
-            return res.json(library);
+            const newLibrary = await getLibrary(req.user._id);
+            res.json(newLibrary);
         }
         const song = await (await Songs.findById(req.body.id).select('tags')).toJSON();
         const tags = user.tags || {};
@@ -85,8 +87,8 @@ router.delete('/', authMiddleware, async (req, res) => {
                 delete tags[tag];
             }
         })
-        const result = await Users.findByIdAndUpdate(req.user.id, { $set: { tags }, $pull: { library: req.body.id } });
-        const newLibrary = await getLibrary(req.user.id);
+        const result = await Users.findOneAndUpdate({ _id: req.user._id }, { $set: { tags }, $pull: { library: req.body.id } });
+        const newLibrary = await getLibrary(req.user._id);
         console.log(newLibrary);
         res.json(newLibrary);
     } catch (error) {

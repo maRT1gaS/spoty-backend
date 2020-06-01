@@ -9,6 +9,7 @@ const albumsRouter = require('./routes/albums');
 const songsRouter = require('./routes/songs');
 const libraryRouter = require('./routes/library');
 const searchRouter = require('./routes/search');
+const recommendationsRouter = require('./routes/recommendations');
 const authRouter = require('./routes/auth');
 
 const link = 'mongodb+srv://admin:12345@cluster0-stmo1.mongodb.net/loudly?retryWrites=true&w=majority';
@@ -31,6 +32,7 @@ app.use('/albums', albumsRouter);
 app.use('/songs', songsRouter);
 app.use('/library', libraryRouter);
 app.use('/search', searchRouter);
+app.use('/recommendations', recommendationsRouter);
 app.use('/auth', authRouter);
 
 mongoose.connect(

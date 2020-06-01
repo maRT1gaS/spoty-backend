@@ -13,13 +13,12 @@ const UsersSchema = new Schema({
     },
     library: [{
         type: Schema.Types.ObjectId,
-        unique: true,
         ref: 'songs'
     }],
     tags: {
         type: Object,
         required: true,
-        default: {}
+        default: new Object
     },
     password: {
         type: String,

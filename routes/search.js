@@ -9,7 +9,6 @@ const Songs = require('../modules/Songs');
 
 router.get('/', authMiddleware, async (req, res) => {
     const query = req.query.query;
-    console.log(query);
     try {
         let artists = await Artists
             .find({ name: new RegExp('\\b' + query, 'i') })
@@ -34,7 +33,7 @@ router.get('/', authMiddleware, async (req, res) => {
                 {
                     path: 'album',
                     model: 'albums',
-                    select: 'name image Url'
+                    select: 'name imageUrl'
                 }
             ])
             .select('name url artist album duration')
