@@ -22,7 +22,8 @@ router.post('/', async (req, res) => {
         artist: req.body.artist,
         album: req.body.album,
         tags: req.body.tags,
-        duration: req.body.duration
+        duration: req.body.duration,
+        favorite: req.body.favorite,
     })
     try {
         const createdSong = await song.save();

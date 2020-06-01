@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 
@@ -39,6 +38,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
             .select('-tags');
         const popular = await Songs
             .find({ artist: req.params.id, favorite: true })
+            .limit(5)
             .populate('album', 'name imageUrl')
             .populate('artist', 'name')
             .select('-tags -favorite');

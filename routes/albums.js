@@ -32,7 +32,25 @@ router.post('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const artist = await Albums.findById(req.params.id).populate('artist', 'name imageUrl').populate('songs', 'name url duration');
+        const artist = await Albums
+            .findById(req.params.id)
+            .populate('artist', 'name imageUrl')
+            .populate({
+                path: 'songs',
+                populate: [
+                    {
+                        path: 'artist',
+                        model: 'artists',
+                        select: 'name imageUrl'
+                    },
+                    {
+                        path: 'album',
+                        model: 'albums',
+                        select: 'name imageUrl'
+                    }
+                ],
+                select: 'name url artist album duration'
+            })
         res.json(artist);
     } catch (error) {
         res.status(400).json({ message: error })
