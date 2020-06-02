@@ -1,9 +1,8 @@
-const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 
-const Artists = require('../modules/Artists');
-const Albums = require('../modules/Albums');
+const Artists = require('../modeles/Artists');
+const Albums = require('../modeles/Albums');
 
 router.get('/',async (req, res) => {
     try {

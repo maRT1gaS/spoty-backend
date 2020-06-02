@@ -3,8 +3,8 @@ const router = express.Router();
 
 const authMiddleware = require('../authMiddleware');
 
-const Songs = require('../modules/Songs');
-const Users = require('../modules/Users');
+const Songs = require('../modeles/Songs');
+const Users = require('../modeles/Users');
 
 const getLibrary = async (id) => {
     const library = await Users.findById(id)

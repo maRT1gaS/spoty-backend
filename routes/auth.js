@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 const authMiddleware = require('../authMiddleware');
 
-const Users = require('../modules/Users');
+const Users = require('../modeles/Users');
 
 router.post('/signup', async (req, res) => {
     const token = uuidv4();

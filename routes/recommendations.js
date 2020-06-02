@@ -4,7 +4,7 @@ const router = express.Router();
 
 const authMiddleware = require('../authMiddleware');
 
-const Songs = require('../modules/Songs');
+const Songs = require('../modeles/Songs');
 
 const RECOMMENDATION_SIZE = 10;
 
