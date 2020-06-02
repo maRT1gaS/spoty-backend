@@ -31,7 +31,11 @@ const SongsSchema = new Schema({
         type: Boolean,
         required: true,
         default: false
-    }
+    },
+    listens: {
+        type: Number,
+        default: 0
+    } 
 });
 
 SongsSchema.set('toJSON', {
@@ -40,6 +44,6 @@ SongsSchema.set('toJSON', {
         delete ret._id;
         delete ret.__v;
     }
-}); 
+});
 
 module.exports = mongoose.model('songs', SongsSchema, 'songs');

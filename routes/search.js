@@ -11,18 +11,18 @@ router.get('/', authMiddleware, async (req, res) => {
     const query = req.query.query;
     try {
         let artists = await Artists
-            .find({ name: new RegExp('\\b' + query, 'i') })
+            .find({ name: new RegExp('(?:^|\\s)' + query, 'i') })
             .limit(5)
             .select('name imageUrl')
 
         let albums = await Albums
-            .find({ name: new RegExp('\\b' + query, 'i') })
+            .find({ name: new RegExp('(?:^|\\s)' + query, 'i') })
             .limit(5)
             .select('name imageUrl artist')
             .populate('artist', 'name')
 
         let songs = await Songs
-            .find({ name: new RegExp('\\b' + query, 'i') })
+            .find({ name: new RegExp('(?:^|\\s)' + query, 'i') })
             .limit(5)
             .populate([
                 {

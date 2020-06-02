@@ -2,7 +2,7 @@ const Users = require('./modules/Users');
 
 module.exports = async (req, res, next) => {
     const token = req.cookies.TOKEN;
-    console.log(token);
+    console.log('Request with token', token);
     if (token) {
         try {
             const user = await Users.findOne({ token });

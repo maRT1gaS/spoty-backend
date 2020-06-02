@@ -20,7 +20,7 @@ const ArtistsSchema = new Schema({
         required: true,
         default: []
     }
-})
+});
 
 ArtistsSchema.set('toJSON', {
     transform: function (doc, ret, options) {

@@ -37,7 +37,8 @@ router.get('/:id', authMiddleware, async (req, res) => {
             .populate('albums', 'name imageUrl year', null, { sort: {'year': -1} })
             .select('-tags');
         const popular = await Songs
-            .find({ artist: req.params.id, favorite: true })
+            .find({ artist: req.params.id })
+            .sort({ listens: -1 })
             .limit(5)
             .populate('album', 'name imageUrl')
             .populate('artist', 'name')

@@ -1,4 +1,5 @@
 const express = require("express");
+const { shuffle } = require("lodash")
 const router = express.Router();
 
 const authMiddleware = require('../authMiddleware');
@@ -6,6 +7,35 @@ const authMiddleware = require('../authMiddleware');
 const Songs = require('../modules/Songs');
 
 const RECOMMENDATION_SIZE = 10;
+
+const getSongsByTag = async (songTags) => {
+    const songs = [];
+    const songIds = [];
+    
+    try {
+        let i = 0;
+        while (i < songTags.length) {
+            const song = await Songs.aggregate([
+                {$match: { tags: { $in: [songTags[i]]}, _id: { $nin: songIds } }},
+                {$sample: { size: 1 }},
+                {$project: {
+                    tags: 0,
+                    favorite: 0
+                }}
+            ]);
+            if (song.length) {
+                songs.push(song[0]);
+                songIds.push(song[0]._id);
+                i += 1;
+            } else {
+                break;
+            }
+        }
+        return { songs, songIds };
+    } catch (error) {
+        return new Error(error);
+    }
+}
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
@@ -17,22 +47,20 @@ router.get('/', authMiddleware, async (req, res) => {
             count += tags[tag];
         });
         if (count) {
-            let predicate = 0;
-            let i = 0;
-            let random = Math.random();
-            while (random > tags[tagsArray[i]] / count + predicate) {
-                predicate += tags[tagsArray[i]] / count;
-                i += 1;
+            let songTags = [];
+            while (songTags.length < RECOMMENDATION_SIZE) {
+                let predicate = 0;
+                let i = 0;
+                let random = Math.random();
+                while (random > tags[tagsArray[i]] / count + predicate) {
+                    predicate += tags[tagsArray[i]] / count;
+                    i += 1;
+                }
+                songTags.push(tagsArray[i]);
             }
-            const tag = tagsArray[i];
-            let songs = await Songs.aggregate([
-                {$match: { tags: { $in: [tag] } }},
-                {$sample: { size: RECOMMENDATION_SIZE }},
-                {$project: {
-                    tags: 0,
-                    favorite: 0
-                }}
-            ]);
+
+            let { songs, songIds } = await getSongsByTag(songTags);
+
             songs = await Songs.populate(songs, [
                 {
                     path: 'artist',
@@ -50,10 +78,12 @@ router.get('/', authMiddleware, async (req, res) => {
                 delete song._id;
                 delete song.__v;
             })
+
             let additional;
             if (songs.length < RECOMMENDATION_SIZE) {
                 additional = await Songs.aggregate([
-                    {$sample: { size: RECOMMENDATION_SIZE }},
+                    {$match: { _id: { $nin: songIds } } },
+                    {$sample: { size: RECOMMENDATION_SIZE - songs.length }},
                     {$project: {
                         tags: 0,
                         favorite: 0
@@ -78,7 +108,7 @@ router.get('/', authMiddleware, async (req, res) => {
                 })
                 songs = [...songs, ...additional];
             }
-            res.json(songs);
+            res.json(shuffle(songs));
         } else {
             let songs = await Songs.aggregate([
                 {$sample: { size: RECOMMENDATION_SIZE }},
@@ -104,11 +134,10 @@ router.get('/', authMiddleware, async (req, res) => {
                 delete song._id;
                 delete song.__v;
             })
-            res.json(songs);
+            res.json(shuffle(songs));
         }
         
     } catch (error) {
-        console.log(error);
         res.status(400).json({ message: error })
     }
 })

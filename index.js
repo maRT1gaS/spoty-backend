@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const app = express();
 
+const Songs = require('./modules/Songs');
+
 const artistsRouter = require('./routes/artists');
 const albumsRouter = require('./routes/albums');
 const songsRouter = require('./routes/songs');
@@ -21,10 +23,14 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-app.get('/files/:dir/:filename', (req, res) => {
+app.get('/files/:dir/:filename', async (req, res) => {
     const {dir, filename} = req.params;
+    let [id, ext] = filename.split('.');
     const file = `${__dirname}/files/${dir}/${filename}`;
     res.download(file);
+    if (ext === 'mp3') {
+        await Songs.findByIdAndUpdate(id, { $inc: { listens: 1 } });
+    }
 });
 
 app.use('/artists', artistsRouter);
@@ -40,9 +46,9 @@ mongoose.connect(
     { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true },
     (err) => {
         if (!err) {
-            console.log('Connected');
+            console.log('Connected to MongoDB');
             app.listen(5000, () => {
-                console.log('We are live');
+                console.log('We are live on', 5000);
             });   
         }
     }
