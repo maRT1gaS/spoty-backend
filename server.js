@@ -50,9 +50,9 @@ mongoose.connect(
     { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true },
     (err) => {
         if (!err) {
-            console.log('Connected to MongoDB');
+            console.log('Successfully connected to MongoDB.');
             app.listen(process.env.PORT || 5000, () => {
-                console.log('We are live on', process.env.PORT || 5000);
+                console.log('Server is live on port', process.env.PORT || 5000);
             });   
         }
     }
