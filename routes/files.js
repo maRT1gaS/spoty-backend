@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Songs = require('../modeles/Songs');
+const Songs = require('../models/Songs');
 
 router.get('/:dir/:filename', async (req, res) => {
     const {dir, filename} = req.params;

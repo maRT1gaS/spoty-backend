@@ -3,9 +3,9 @@ const router = express.Router();
 
 const authMiddleware = require('../authMiddleware');
 
-const Artists = require('../modeles/Artists');
-const Albums = require('../modeles/Albums');
-const Songs = require('../modeles/Songs');
+const Artists = require('../models/Artists');
+const Albums = require('../models/Albums');
+const Songs = require('../models/Songs');
 
 router.get('/', authMiddleware, async (req, res) => {
     try {

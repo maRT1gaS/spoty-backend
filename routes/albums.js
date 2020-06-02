@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const Artists = require('../modeles/Artists');
-const Albums = require('../modeles/Albums');
+const Artists = require('../models/Artists');
+const Albums = require('../models/Albums');
 
 router.get('/',async (req, res) => {
     try {

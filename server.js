@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const app = express();
 
 const filesRouter = require('./routes/files');
 const artistsRouter = require('./routes/artists');
@@ -15,6 +14,8 @@ const searchRouter = require('./routes/search');
 const recommendationsRouter = require('./routes/recommendations');
 const authRouter = require('./routes/auth');
 
+const app = express();
+
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use((req, res, next) => {
@@ -24,7 +25,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/files', filesRouter);
-
 app.use('/api/artists', artistsRouter);
 app.use('/api/albums', albumsRouter);
 app.use('/api/songs', songsRouter);

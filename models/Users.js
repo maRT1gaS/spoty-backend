@@ -8,7 +8,6 @@ const UsersSchema = new Schema({
     },
     email: {
         type: String,
-        required: true,
         unique: true
     },
     library: [{
@@ -41,4 +40,4 @@ UsersSchema.set('toJSON', {
     }
 }); 
 
-module.exports = mongoose.model('users', UsersSchema, 'users');
+module.exports = mongoose.model('users', UsersSchema);

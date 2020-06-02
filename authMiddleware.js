@@ -1,4 +1,4 @@
-const Users = require('./modeles/Users');
+const Users = require('./models/Users');
 
 module.exports = async (req, res, next) => {
     const token = req.cookies.TOKEN;

@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 const authMiddleware = require('../authMiddleware');
 
-const Users = require('../modeles/Users');
+const Users = require('../models/Users');
 
 router.post('/signup', async (req, res) => {
     const token = uuidv4();
@@ -32,8 +32,9 @@ router.post('/signup', async (req, res) => {
             }
         });
     } catch (error) {
+        console.log(error);
         if (error.name === 'MongoError' && error.code === 11000) {
-            res.status(200).json({
+            return res.status(200).json({
                 error: true,
                 data: {
                     email: 'Email already exist.'
