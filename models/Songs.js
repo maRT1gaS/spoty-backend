@@ -27,11 +27,6 @@ const SongsSchema = new Schema({
         type: Number,
         required: true
     },
-    favorite: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
     listens: {
         type: Number,
         default: 0

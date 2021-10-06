@@ -1,27 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const uuidv4 = require('uuid').v4;
 const bcrypt = require('bcryptjs');
-
-const authMiddleware = require('../authMiddleware');
+const jwt = require('jsonwebtoken');
 
 const Users = require('../models/Users');
 
 router.post('/signup', async (req, res) => {
-    const token = uuidv4();
     const password = await bcrypt.hash(req.body.password, 10);
     
     const user = new Users({
         name: req.body.name,
         email: req.body.email,
-        password,
-        token
+        password
     })
 
     try {
         const result = await user.save();
         delete result.password;
-        delete result.token;
+
+        const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role }, process.env.SECRET);
         res.cookie('TOKEN', token);
         res.status(201).json({
             error: false,
@@ -51,7 +48,9 @@ router.post('/signin', async (req, res) => {
         if (user) {
             const isValidPassword = await bcrypt.compare(req.body.password, user.password);
             if (isValidPassword) {
-                res.cookie('TOKEN', user.token)
+                const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role }, process.env.SECRET);
+                res.cookie('TOKEN', token);
+
                 return res.status(201).json({
                     name: user.name,
                     email: user.email,

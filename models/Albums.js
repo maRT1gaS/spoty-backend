@@ -31,6 +31,6 @@ AlbumsSchema.set('toJSON', {
         delete ret._id;
         delete ret.__v;
     }
-}); 
+});
 
 module.exports = mongoose.model('albums', AlbumsSchema, 'albums');

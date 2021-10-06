@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const authMiddleware = require('../authMiddleware');
+const {authMiddleware} = require('../authMiddleware');
 
 const Artists = require('../models/Artists');
 const Albums = require('../models/Albums');

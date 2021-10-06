@@ -23,8 +23,9 @@ const UsersSchema = new Schema({
         type: String,
         required: true,
     },
-    token: {
-        type: String
+    role: {
+        type: String,
+        default: 'user'
     },
     date: {
         type: String,

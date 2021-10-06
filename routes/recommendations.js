@@ -2,7 +2,7 @@ const express = require("express");
 const { shuffle } = require("lodash")
 const router = express.Router();
 
-const authMiddleware = require('../authMiddleware');
+const {authMiddleware} = require('../authMiddleware');
 
 const Songs = require('../models/Songs');
 
@@ -19,8 +19,7 @@ const getSongsByTag = async (songTags) => {
                 {$match: { tags: { $in: [songTags[i]]}, _id: { $nin: songIds } }},
                 {$sample: { size: 1 }},
                 {$project: {
-                    tags: 0,
-                    favorite: 0
+                    tags: 0
                 }}
             ]);
             if (song.length) {
@@ -85,8 +84,7 @@ router.get('/', authMiddleware, async (req, res) => {
                     {$match: { _id: { $nin: songIds } } },
                     {$sample: { size: RECOMMENDATION_SIZE - songs.length }},
                     {$project: {
-                        tags: 0,
-                        favorite: 0
+                        tags: 0
                     }}
                 ]);
                 additional = await Songs.populate(additional, [
@@ -113,8 +111,7 @@ router.get('/', authMiddleware, async (req, res) => {
             let songs = await Songs.aggregate([
                 {$sample: { size: RECOMMENDATION_SIZE }},
                 {$project: {
-                    tags: 0,
-                    favorite: 0
+                    tags: 0
                 }}
             ]);
             songs = await Songs.populate(songs, [
