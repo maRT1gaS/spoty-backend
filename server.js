@@ -14,6 +14,7 @@ const libraryRouter = require('./routes/library');
 const searchRouter = require('./routes/search');
 const recommendationsRouter = require('./routes/recommendations');
 const authRouter = require('./routes/auth');
+const statisticsRouter = require('./routes/statistics');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/library', libraryRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/recommendations', recommendationsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/statistics', statisticsRouter);
 
 app.use((req, res) => {
     if (fs.existsSync(__dirname + '/static' + req.path)) {

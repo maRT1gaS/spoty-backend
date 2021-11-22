@@ -14,6 +14,9 @@ const ArtistsSchema = new Schema({
     albums: [{
         type: Schema.Types.ObjectId,
         ref: 'albums'
+    }],
+    tags: [{
+        type: String,
     }]
 });
 

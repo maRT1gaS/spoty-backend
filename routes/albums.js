@@ -20,6 +20,17 @@ const saveImage = (image) => {
     return imagePath;
 }
 
+router.get('/getalbums/:id', adminAuthMiddleware, async (req, res) => {
+    try {
+        let albums = await Albums
+            .find({artist: req.params.id})
+            .select('-artist');
+        res.json(albums);
+    } catch (error) {
+        res.status(400).json({ message: error });
+    }
+})
+
 router.get('/:id', authMiddleware, async (req, res) => {
     try {
         const artist = await Albums
@@ -110,7 +121,8 @@ router.put('/:id', adminAuthMiddleware, async (req, res) => {
         }
         await Albums
             .findByIdAndUpdate(req.params.id, newAlbum)
-        res.sendStatus(200);
+        const albumAfterChange = await Albums.findById(req.params.id);
+        res.json(albumAfterChange);
     } catch (error) {
         console.log(error);
         res.status(400).json({ message: error });

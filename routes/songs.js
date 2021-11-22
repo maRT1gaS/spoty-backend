@@ -43,7 +43,6 @@ router.get('/', adminAuthMiddleware, async (req, res) => {
 router.post('/', adminAuthMiddleware, async (req, res) => {
     const songPath = await saveSong(req.files.song);
     const duration = Math.round(await getAudioDurationInSeconds(path.join(__dirname, '..', songPath)));
-
     const song = new Songs({
         name: req.body.name,
         url: songPath,
@@ -93,7 +92,8 @@ router.put('/:id', adminAuthMiddleware, async (req, res) => {
         }
         await Songs
             .findByIdAndUpdate(req.params.id, newSong)
-        res.sendStatus(200);
+        const songAfterChange = await Songs.findById(req.params.id);
+        res.json(songAfterChange);
     } catch (error) {
         console.log(error);
         res.status(400).json({ message: error });

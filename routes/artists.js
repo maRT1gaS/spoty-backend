@@ -54,7 +54,7 @@ router.post('/', adminAuthMiddleware, async (req, res) => {
     const imagePath = saveImage(req.files.image);
     const artist = new Artists({
         name: req.body.name,
-        imageUrl: imagePath
+        imageUrl: imagePath,
     })
     try {
         const result = await artist.save();
@@ -99,7 +99,8 @@ router.put('/:id', adminAuthMiddleware, async (req, res) => {
         }
         await Artists
             .findByIdAndUpdate(req.params.id, newArtist)
-        res.sendStatus(200);
+        const artistAfterChange = await Artists.findById(req.params.id);
+        res.json(artistAfterChange);
     } catch (error) {
         console.log(error);
         res.status(400).json({ message: error });
