@@ -53,6 +53,7 @@ router.post('/signin', async (req, res) => {
 
                 return res.status(201).json({
                     name: user.name,
+                    role: user.role,
                     email: user.email,
                     id: user.id
                 })
