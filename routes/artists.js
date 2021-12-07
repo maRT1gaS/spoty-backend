@@ -24,7 +24,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
     try {
         let artist = await Artists
             .findById(req.params.id)
-            .populate('albums', 'name imageUrl year', null, { sort: {'year': -1} })
+            .populate('albums', 'name imageUrl', null, { sort: {'year': -1} })
             .select('-tags');
         const popular = await Songs
             .find({ artist: req.params.id })
@@ -32,7 +32,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
             .limit(5)
             .populate('album', 'name imageUrl')
             .populate('artist', 'name')
-            .select('-tags');
+            .select('-tags -listens');
         artist = artist.toJSON();
         artist.popular = popular;
         res.json(artist);

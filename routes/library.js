@@ -14,7 +14,7 @@ const getLibrary = async (id) => {
                 {
                     path: 'artist',
                     model: 'artists',
-                    select: 'name imageUrl'
+                    select: 'name'
                 },
                 {
                     path: 'album',

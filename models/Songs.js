@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const SongsSchema = new Schema({
+    _id: {
+        type: Schema.Types.ObjectId,
+        require: true
+    },
     name: {
         type: String,
         required: true

@@ -42,7 +42,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
                     {
                         path: 'artist',
                         model: 'artists',
-                        select: 'name imageUrl'
+                        select: 'name'
                     },
                     {
                         path: 'album',

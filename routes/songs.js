@@ -4,16 +4,17 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const { getAudioDurationInSeconds } = require('get-audio-duration');
+const Mongoose = require('mongoose');
 
 const Albums = require('../models/Albums');
+const Artists = require('../models/Artists');
 const Songs = require('../models/Songs');
 
 const {authMiddleware, adminAuthMiddleware} = require('../authMiddleware');
 
-const saveSong = async (song) => {
+const saveSong = async (song, songId) => {
     let songExt = song.name.split('.');
     songExt = songExt[songExt.length - 1];
-    const songId = uuidv4();
     const songFilename = `${songId}.${songExt}`;
     const songPath = `/files/songs/${songFilename}`;
     await song.mv(path.join(__dirname, '..', songPath));
@@ -41,19 +42,23 @@ router.get('/', adminAuthMiddleware, async (req, res) => {
 
 
 router.post('/', adminAuthMiddleware, async (req, res) => {
-    const songPath = await saveSong(req.files.song);
+    const tags = req.body.tags.split(',').map(tag => tag.trim());
+    const id = Mongoose.Types.ObjectId();
+    const songPath = await saveSong(req.files.song, id);
     const duration = Math.round(await getAudioDurationInSeconds(path.join(__dirname, '..', songPath)));
     const song = new Songs({
+        _id: id,
         name: req.body.name,
         url: songPath,
         artist: req.body.artist,
         album: req.body.album,
-        tags: req.body.tags.split(',').map(tag => tag.trim()),
+        tags: tags,
         duration: duration
     })
     try {
         const createdSong = await song.save();
-        const pushToAlbum = await Albums.findByIdAndUpdate({ _id: req.body.album }, { $push: { songs: createdSong._id } });
+        await Albums.findByIdAndUpdate({ _id: req.body.album }, { $push: { songs: id } });
+        await Artists.findByIdAndUpdate({ _id: req.body.artist }, { $push: { tags: tags } })
         res.json(createdSong);
     } catch (error) {
         console.log(error)

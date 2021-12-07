@@ -18,8 +18,7 @@ router.get('/', authMiddleware, async (req, res) => {
         let albums = await Albums
             .find({ name: new RegExp('(?:^|\\s)' + query, 'i') })
             .limit(5)
-            .select('name imageUrl artist')
-            .populate('artist', 'name')
+            .select('name imageUrl')
 
         let songs = await Songs
             .find({ name: new RegExp('(?:^|\\s)' + query, 'i') })
@@ -28,7 +27,7 @@ router.get('/', authMiddleware, async (req, res) => {
                 {
                     path: 'artist',
                     model: 'artists',
-                    select: 'name imageUrl'
+                    select: 'name'
                 },
                 {
                     path: 'album',
